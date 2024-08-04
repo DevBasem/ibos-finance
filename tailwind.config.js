@@ -8,9 +8,13 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "main-gradient":
+          "linear-gradient(128.49deg, #CB3CFF 19.86%, #7F25FB 68.34%)",
+        "button-gradient":
+          "linear-gradient(90deg, #DF00DB 0%, #AB03C4 23.5%, #320079 100%)",
+      },
+      boxShadow: {
+        "input-shadow": "0px 10px 40px 0px rgba(174, 174, 174, 0.2)",
       },
     },
   },
