@@ -16,7 +16,7 @@ export default function AuthLayout({ children }) {
           {children}
         </div>
       </div>
-      <div className="grid flex-1 place-content-center bg-[#F5F6FA] max-xl:hidden">
+      <div className="grid flex-1 place-content-center bg-[#F5F6FA] py-4 max-xl:hidden">
         <div className="rounded-3xl border-2 bg-white px-8 py-12">
           {children}
         </div>
