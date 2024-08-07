@@ -7,15 +7,15 @@ export default function InfoLayout({ children }) {
       <motion.div
         initial={{
           width: "50%",
-          borderBottomRightRadius: "1000rem",
-          borderTopRightRadius: "1000rem",
+          borderBottomRightRadius: "2000rem",
+          borderTopRightRadius: "2000rem",
         }}
         animate={{
           width: "100%",
           borderBottomRightRadius: "0rem",
           borderTopRightRadius: "0rem",
         }}
-        transition={{ duration: 1.5 }}
+        transition={{ duration: 0.6 }}
         className="relative flex min-h-[calc(602px+2rem)] flex-col items-center justify-center bg-main-gradient xl:rounded-br-xl xl:rounded-tr-xl"
       ></motion.div>
       <div className="absolute flex h-full w-full justify-center">

@@ -9,7 +9,9 @@ export default function ClientPathnameChecker({ children }) {
 
   const isAuthPage = pathname === "/login" || pathname === "/register";
 
-  const isInfoPage = pathname === "/register/personal-info";
+  const isInfoPage =
+    pathname === "/register/personal-info" ||
+    pathname === "/register/personal-info/financial-info";
 
   if (isAuthPage) {
     return <AuthLayout>{children}</AuthLayout>;

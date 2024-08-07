@@ -1,9 +1,9 @@
-"use client"; // Ensure this is at the top of the file for client components
+"use client";
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Ensure correct import path
+import { useRouter } from "next/navigation";
 
 const Register = () => {
   const initialValues = {
@@ -32,13 +32,13 @@ const Register = () => {
       .oneOf([true], "You must accept the terms and conditions"),
   });
 
-  const router = useRouter(); // Correct placement inside the component
+  const router = useRouter();
 
   const handleSubmit = (values, { setSubmitting }) => {
     console.log(values);
     localStorage.setItem("userData", JSON.stringify(values));
     setSubmitting(false);
-    router.push("/register/personal-info"); // Navigate to the personal-info page
+    router.push("/register/personal-info");
   };
 
   return (
