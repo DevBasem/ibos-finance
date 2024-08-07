@@ -1,12 +1,23 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import AuthLayout from "../auth/layout";
+import AuthLayout from "../layouts/auth/layout";
+import InfoLayout from "../layouts/info/layout";
 
 export default function ClientPathnameChecker({ children }) {
   const pathname = usePathname();
 
   const isAuthPage = pathname === "/login" || pathname === "/register";
 
-  return isAuthPage ? <AuthLayout>{children}</AuthLayout> : <>{children}</>;
+  const isInfoPage = pathname === "/register/personal-info";
+
+  if (isAuthPage) {
+    return <AuthLayout>{children}</AuthLayout>;
+  }
+
+  if (isInfoPage) {
+    return <InfoLayout>{children}</InfoLayout>;
+  }
+
+  return <>{children}</>;
 }
