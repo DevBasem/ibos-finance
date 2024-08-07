@@ -3,12 +3,12 @@ import Image from "next/image";
 
 export default function InfoLayout({ children }) {
   return (
-    <main className="relative flex min-h-screen">
+    <main className="relative flex min-h-screen overflow-x-hidden">
       <motion.div
         initial={{
           width: "50%",
-          borderBottomRightRadius: "0.75rem",
-          borderTopRightRadius: "0.75rem",
+          borderBottomRightRadius: "1000rem",
+          borderTopRightRadius: "1000rem",
         }}
         animate={{
           width: "100%",
@@ -16,7 +16,7 @@ export default function InfoLayout({ children }) {
           borderTopRightRadius: "0rem",
         }}
         transition={{ duration: 1.5 }}
-        className="relative flex flex-col items-center justify-center bg-main-gradient xl:rounded-br-xl xl:rounded-tr-xl"
+        className="relative flex min-h-[calc(602px+2rem)] flex-col items-center justify-center bg-main-gradient xl:rounded-br-xl xl:rounded-tr-xl"
       ></motion.div>
       <div className="absolute flex h-full w-full justify-center">
         <motion.div
