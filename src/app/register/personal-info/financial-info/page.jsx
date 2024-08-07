@@ -1,22 +1,13 @@
 "use client";
 import React from "react";
-import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-const CountryDropdown = dynamic(
-  () =>
-    import("react-country-region-selector").then((mod) => mod.CountryDropdown),
-  { ssr: false },
-);
-
 export default function FinancialInfoForm() {
-  const [country, setCountry] = React.useState("");
-
   const router = useRouter();
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     router.push("/register/personal-info");
   };
 
@@ -26,96 +17,93 @@ export default function FinancialInfoForm() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ ease: "easeInOut", duration: 0.25 }}
     >
-      <form action="/">
+      <form onSubmit={handleSubmit}>
         <div>
-          <h1 className="text-3xl font-semibold">financial-info</h1>
-          <h2 className="text-xl font-medium">to get started</h2>
+          <h1 className="text-3xl font-semibold">Financial Information</h1>
+          <h2 className="text-xl font-medium">To Get Started</h2>
         </div>
         <div className="mt-12">
           <div className="flex flex-col gap-6">
-            <div>
-              <label htmlFor="full-name" className="sr-only">
-                Full Name
-              </label>
-              <input
-                id="full-name"
-                name="fullName"
-                type="text"
-                className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
-                placeholder="Full Name"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="gender" className="sr-only">
-                Gender
-              </label>
-              <select
-                id="gender"
-                name="gender"
-                className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="country" className="sr-only">
-                Country
-              </label>
-              <CountryDropdown
-                value={country}
-                onChange={(val) => setCountry(val)}
-                className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
-                required
-              />
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label htmlFor="salary" className="sr-only">
+                  Salary
+                </label>
+                <input
+                  id="salary"
+                  name="salary"
+                  type="number"
+                  className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                  placeholder="Salary"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+                <label htmlFor="savings" className="sr-only">
+                  Savings
+                </label>
+                <input
+                  id="savings"
+                  name="savings"
+                  type="number"
+                  className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                  placeholder="Savings"
+                  required
+                />
+              </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
-                <label htmlFor="day" className="sr-only">
-                  Day
+                <label htmlFor="expenses" className="sr-only">
+                  Expenses
                 </label>
                 <input
-                  id="day"
-                  name="day"
+                  id="expenses"
+                  name="expenses"
                   type="number"
                   className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                  placeholder="Day"
-                  min="1"
-                  max="31"
+                  placeholder="Expenses"
                   required
                 />
               </div>
               <div className="flex-1">
-                <label htmlFor="month" className="sr-only">
-                  Month
+                <label htmlFor="investments" className="sr-only">
+                  Investments
                 </label>
                 <input
-                  id="month"
-                  name="month"
+                  id="investments"
+                  name="investments"
                   type="number"
                   className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                  placeholder="Month"
-                  min="1"
-                  max="12"
+                  placeholder="Investments"
+                  required
+                />
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label htmlFor="debts-to-pay" className="sr-only">
+                  Debts to Pay
+                </label>
+                <input
+                  id="debts-to-pay"
+                  name="debtsToPay"
+                  type="number"
+                  className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                  placeholder="Debts to Pay"
                   required
                 />
               </div>
               <div className="flex-1">
-                <label htmlFor="year" className="sr-only">
-                  Year
+                <label htmlFor="debts-owed" className="sr-only">
+                  Debts Owed
                 </label>
                 <input
-                  id="year"
-                  name="year"
+                  id="debts-owed"
+                  name="debtsOwed"
                   type="number"
                   className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                  placeholder="Year"
-                  min="1900"
-                  max={new Date().getFullYear()}
+                  placeholder="Debts Owed"
                   required
                 />
               </div>
