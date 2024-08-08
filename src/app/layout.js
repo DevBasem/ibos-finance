@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className="antialiased">
       <body className={plusJakartaSans.className}>
         <ClientPathnameChecker>{children}</ClientPathnameChecker>
       </body>
