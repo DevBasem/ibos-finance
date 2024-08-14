@@ -33,9 +33,8 @@ export default function SideBar() {
             <li key={tab.route}>
               <Link
                 href={tab.route}
-                className={`block w-full rounded p-4 text-left ${
-                  pathname === tab.route ? "bg-main-light-selected" : ""
-                }`}
+                className={`block w-full rounded p-4 text-left ${pathname === tab.route ? "bg-main-light-selected dark:bg-main-dark-selected" : ""
+                  }`}
                 aria-current={pathname === tab.route ? "page" : undefined}
               >
                 <div className="-mx-2 flex items-center gap-2">

@@ -129,14 +129,14 @@ const dataFormatter = (number) =>
 export default function home() {
   return (
     <section>
-      <h2 className="text-main-dark-primary flex flex-col py-8 text-4xl font-extrabold">
+      <h2 className="text-main-dark-primary dark:text-white flex flex-col py-8 text-4xl font-extrabold">
         <span>Welcome back,</span>
         <span>Basem</span>
       </h2>
 
       {/* cards */}
-      <div className="flex gap-6">
-        <Card className="bg-main-light-secondary mx-auto max-w-md border-stone-200 shadow-xl">
+      <div className="flex gap-5">
+        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -150,7 +150,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="bg-main-light-secondary mx-auto max-w-md border-stone-200 shadow-xl">
+        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -164,7 +164,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="bg-main-light-secondary mx-auto max-w-md border-stone-200 shadow-xl">
+        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -178,7 +178,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="bg-main-light-secondary mx-auto max-w-md border-stone-200 shadow-xl">
+        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -194,7 +194,7 @@ export default function home() {
       </div>
 
       {/* chart */}
-      <div className="bg-main-light-secondary my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
+      <div className="bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
         <h2 className="pb-4 text-xl font-bold">Markets</h2>
         <AreaChart
           className="min-h-[400px]"
@@ -210,7 +210,7 @@ export default function home() {
       </div>
 
       {/* table */}
-      <div className="bg-main-light-secondary my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
+      <div className="bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
         <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
         <div>
           <Table>

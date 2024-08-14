@@ -5,10 +5,10 @@ export default function AuthLayout({ children }) {
     <main className="flex min-h-screen">
       <div className="flex flex-1 flex-col items-center justify-center bg-main-gradient xl:rounded-br-xl xl:rounded-tr-xl">
         <Image
-          className="max-xl:-my-3 max-xl:mx-auto max-xl:w-40 max-sm:mt-1"
+          className="max-xl:-my-3 max-xl:mx-auto max-xl:w-40 max-sm:mt-1 w-auto h-auto"
           width={645}
           height={430}
-          src="/images/main-vector.png"
+          src="/images/main-vector.svg"
           alt="Finance image"
           priority
         />

@@ -9,6 +9,7 @@ module.exports = {
     // Path to Tremor module
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
+  
   theme: {
     transparent: "transparent",
     current: "currentColor",
