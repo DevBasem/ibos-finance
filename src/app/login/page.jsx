@@ -1,13 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import Link from "next/link";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [error, setError] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if the user is already authenticated
+    const token = Cookies.get("token");
+    if (token) {
+      // Redirect authenticated users to the home page or dashboard
+      router.push("/home");
+    }
+  }, [router]);
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
@@ -24,10 +35,12 @@ export default function Login() {
       if (response.data.status === "success") {
         // Handle successful login
         console.log("Login successful", response.data);
-        // You can redirect the user or store the token as needed
         // Save token and user ID in cookies
-        Cookies.set("token", response.data.token, { expires: 1 }); // Expires in 1 days
+        Cookies.set("token", response.data.token, { expires: 1 }); // Expires in 1 day
         Cookies.set("userId", response.data.user._id, { expires: 1 });
+
+        // Redirect to home page or dashboard
+        router.push("/home");
       } else {
         setError(response.data.message || "Login failed. Please check your credentials.");
       }
