@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import Link from "next/link";
@@ -11,15 +11,6 @@ export default function Login() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    // Check if the user is already authenticated
-    const token = Cookies.get("token");
-    if (token) {
-      // Redirect authenticated users to the home page or dashboard
-      router.push("/home");
-    }
-  }, [router]);
-
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
     password: Yup.string().required("Password is required"),
@@ -28,18 +19,19 @@ export default function Login() {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await axios.post("https://ibos-deploy.vercel.app/login", {
-        username: values.username, // Use the username field
+        username: values.username,
         password: values.password,
       });
 
       if (response.data.status === "success") {
         // Handle successful login
         console.log("Login successful", response.data);
-        // Save token and user ID in cookies
-        Cookies.set("token", response.data.token, { expires: 1 }); // Expires in 1 day
-        Cookies.set("userId", response.data.user._id, { expires: 1 });
 
-        // Redirect to home page or dashboard
+        // Save token and user ID in cookies
+        Cookies.set("token", response.data.token);
+        Cookies.set("userId", response.data.user._id);
+
+        // Redirect to home page
         router.push("/home");
       } else {
         setError(response.data.message || "Login failed. Please check your credentials.");
