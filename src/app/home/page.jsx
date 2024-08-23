@@ -135,8 +135,8 @@ export default function home() {
       </h2>
 
       {/* cards */}
-      <div className="flex gap-5">
-        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
+      <div className="flex flex-wrap gap-5">
+        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -150,7 +150,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
+        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -164,7 +164,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
+        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>
@@ -178,7 +178,7 @@ export default function home() {
           <ProgressBar value={32} className="mt-2" />
         </Card>
 
-        <Card className="flex-1 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
+        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
           <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
             Sales
           </h4>

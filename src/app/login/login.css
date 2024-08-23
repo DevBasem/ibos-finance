@@ -1,0 +1,39 @@
+@keyframes gradient-animation-success {
+  0% {
+    border-color: #a0d6a0;
+    box-shadow: 0 0 8px 2px #a0d6a0;
+  }
+  50% {
+    border-color: #8ccf8c;
+    box-shadow: 0 0 12px 4px #8ccf8c;
+  }
+  100% {
+    border-color: #a0d6a0;
+    box-shadow: 0 0 8px 2px #a0d6a0;
+  }
+}
+
+@keyframes gradient-animation-error {
+  0% {
+    border-color: #f8c4c4;
+    box-shadow: 0 0 8px 2px #f8c4c4;
+  }
+  50% {
+    border-color: #f59a9a;
+    box-shadow: 0 0 12px 4px #f59a9a;
+  }
+  100% {
+    border-color: #f8c4c4;
+    box-shadow: 0 0 8px 2px #f8c4c4;
+  }
+}
+
+.animate-gradient-success {
+  border: 2px solid transparent;
+  animation: gradient-animation-success 1.5s infinite;
+}
+
+.animate-gradient-error {
+  border: 2px solid transparent;
+  animation: gradient-animation-error 1.5s infinite;
+}

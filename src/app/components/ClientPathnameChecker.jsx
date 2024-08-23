@@ -1,5 +1,4 @@
 "use client";
-
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 import AuthLayout from "../layouts/auth/layout";
@@ -8,8 +7,8 @@ import MainLayout from "../layouts/main/layout";
 
 export default function ClientPathnameChecker({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  // const router = useRouter();
+  // const { isAuthenticated } = useAuth();
 
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isInfoPage =
@@ -22,15 +21,15 @@ export default function ClientPathnameChecker({ children }) {
     pathname === "/portfolio" ||
     pathname === "/settings";
 
-  if (isAuthPage && isAuthenticated) {
-    router.push("/home");
-    return null;
-  }
+  // if (isAuthPage && isAuthenticated) {
+  //   router.push("/home");
+  //   return null;
+  // }
 
-  if (isMainPage && !isAuthenticated) {
-    router.push("/login");
-    return null;
-  }
+  // if (isMainPage && !isAuthenticated) {
+  //   router.push("/login");
+  //   return null;
+  // }
 
   if (isAuthPage) {
     return <AuthLayout>{children}</AuthLayout>;
