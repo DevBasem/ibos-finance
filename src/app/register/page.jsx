@@ -6,6 +6,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@headlessui/react";
+import Cookies from 'js-cookie';
 
 const Register = () => {
   const [error, setError] = useState("");
@@ -54,6 +55,7 @@ const Register = () => {
       });
 
       if (response.data.status === "success") {
+        Cookies.set('token', response.data.token, { expires: 7 });
         setSuccessMessage(response.data.message);
 
         setTimeout(() => {
@@ -63,6 +65,7 @@ const Register = () => {
         setError(response.data.message);
       }
     } catch (error) {
+      console.error("Error during registration:", error); // Log the full error
       setError(error.response?.data?.message || "An error occurred. Please try again later.");
     } finally {
       setSubmitting(false);
@@ -149,7 +152,7 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <Checkbox
                       checked={values.terms}
                       onChange={(checked) => setFieldValue("terms", checked)}
@@ -162,7 +165,7 @@ const Register = () => {
                     </Checkbox>
                     <label
                       htmlFor="checkbox-terms"
-                      className="cursor-pointer text-blue-700"
+                      className="cursor-pointer hover:text-blue-500 hover:underline"
                     >
                       Agree to our terms and conditions
                     </label>

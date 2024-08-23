@@ -22,7 +22,7 @@ export default function SideBar() {
   const pathname = usePathname();
 
   return (
-    <aside className="px-4 py-10">
+    <aside className="px-4 py-10 overflow-y-auto max-h-screen">
       <Avatar />
       <nav className="pt-10" aria-label="Sidebar Navigation">
         <h2 className="pb-6 ps-3 text-xl font-bold leading-3">

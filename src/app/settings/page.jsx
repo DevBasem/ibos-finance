@@ -5,6 +5,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import PageHeader from "../components/main/PageHeader";
 
 const CountryDropdown = dynamic(
   () =>
@@ -113,10 +114,7 @@ const Settings = () => {
     >
       {({ isSubmitting, setFieldValue }) => (
         <Form>
-          <div>
-            <h1 className="text-3xl font-semibold">Settings</h1>
-            <h2 className="text-xl font-medium">Update your information</h2>
-          </div>
+          <PageHeader title="Settings" subtitle="Update your information" />
           <div className="mt-12">
             {/* Personal Information */}
             <div className="flex flex-col gap-6">

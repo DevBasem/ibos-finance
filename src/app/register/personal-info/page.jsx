@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const CountryDropdown = dynamic(
   () =>
@@ -40,11 +41,35 @@ export default function PersonalInfoForm() {
   const [country, setCountry] = React.useState("");
   const router = useRouter();
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log(values);
-    localStorage.setItem("personalInfo", JSON.stringify(values));
-    setSubmitting(false);
-    router.push("/register/personal-info/financial-info");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const token = Cookies.get('token'); // Get the token using js-cookie
+      console.log("Token from cookies:", token);
+
+      const response = await axios.post(
+        'https://ibos-deploy.vercel.app/register/personal-info',
+        {
+          fullName: values.fullName,
+          gender: values.gender,
+          country: values.country,
+          day: values.day,
+          month: values.month,
+          year: values.year,
+        },
+        {
+          headers: {
+            Cookie: `token=${token}`,
+          },
+        }
+      );
+
+      console.log("Response data:", response.data); // Handle success response as needed
+      router.push("/register/personal-info/financial-info");
+    } catch (error) {
+      console.error("Error during submission:", error.response?.data || error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

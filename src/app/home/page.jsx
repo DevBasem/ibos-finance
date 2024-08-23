@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@tremor/react";
 
+import PageHeader from "../components/main/PageHeader"
+
 const chartdata = [
   {
     date: "Jan 22",
@@ -129,10 +131,7 @@ const dataFormatter = (number) =>
 export default function home() {
   return (
     <section>
-      <h2 className="text-main-dark-primary dark:text-white flex flex-col py-8 text-4xl font-extrabold">
-        <span>Welcome back,</span>
-        <span>Basem</span>
-      </h2>
+      <PageHeader title="Welcome back," subtitle="Basem" />
 
       {/* cards */}
       <div className="flex flex-wrap gap-5">

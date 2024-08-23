@@ -18,7 +18,11 @@ export default function Login() {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    // Clear messages before starting the new login attempt
+    setError("");
+    setSuccessMessage("");
+
     try {
       const response = await axios.post("https://ibos-deploy.vercel.app/login", {
         username: values.username,
@@ -58,8 +62,8 @@ export default function Login() {
       initialValues={{ username: "", password: "" }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      validateOnChange={false} // Disable validation on change
-      validateOnBlur={false}   // Disable validation on blur
+      validateOnChange={true} // Enable validation on change
+      validateOnBlur={true}   // Enable validation on blur
     >
       {({ isSubmitting, isValid, values }) => {
         // Determine if both fields are filled
@@ -88,6 +92,9 @@ export default function Login() {
                     placeholder="Username"
                     onFocus={handleFocus} // Clear messages on focus
                   />
+                  <ErrorMessage name="username">
+                    {msg => <p className="text-red-600 text-sm">{msg}</p>}
+                  </ErrorMessage>
                 </div>
                 <div>
                   <label htmlFor="password" className="sr-only">
@@ -101,6 +108,9 @@ export default function Login() {
                     placeholder="Password"
                     onFocus={handleFocus} // Clear messages on focus
                   />
+                  <ErrorMessage name="password">
+                    {msg => <p className="text-red-600 text-sm">{msg}</p>}
+                  </ErrorMessage>
                 </div>
               </div>
               <div className="mt-6">

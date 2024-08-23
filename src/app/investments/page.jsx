@@ -11,6 +11,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
+import PageHeader from "../components/main/PageHeader"
 
 const data = [
   {
@@ -66,6 +67,7 @@ const dataFormatter = (number) =>
 export default function Investments() {
   return (<div>
     <section>
+      <PageHeader title="Welcome back," subtitle="Basem" />
       <Card className="flex space-x-4 justify-between px-4 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
         <div className="flex gap-4 items-center">
           <label className="text-xl font-bold" htmlFor="budget">Available budget:</label>
