@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@headlessui/tailwindcss": "^0.2.1",
+    "@heroicons/react": "^2.1.5",
     "@radix-ui/react-dialog": "^1.1.1",
     "@remixicon/react": "^4.2.0",
     "@tremor/react": "^3.17.4",

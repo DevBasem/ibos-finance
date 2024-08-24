@@ -1,6 +1,7 @@
 import SideBar from "../../components/main/SideBar";
+import withAuth from "../../utils/withAuth";
 
-export default function MainLayout({ children }) {
+const MainLayout = ({ children }) => {
   return (
     <main className="bg-main-light-primary dark:bg-main-dark-primary flex h-screen w-full gap-4 p-4">
       {/** Side Bar Component */}
@@ -14,3 +15,5 @@ export default function MainLayout({ children }) {
     </main>
   );
 }
+
+export default withAuth(MainLayout);

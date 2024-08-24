@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import Link from "next/link";
@@ -40,7 +40,7 @@ export default function Login() {
         // Wait for a short period before redirecting
         setTimeout(() => {
           router.push("/home");
-        }, 1500); // Adjust delay time as needed
+        }, 1000); // Adjust delay time as needed
       } else {
         setError(response.data.message || "Login failed. Please check your credentials.");
       }
@@ -56,6 +56,13 @@ export default function Login() {
     setError("");
     setSuccessMessage("");
   };
+
+  useEffect(() => {
+    const isAuthenticated = !!Cookies.get('token');
+    if (isAuthenticated) {
+      router.push('/home'); // Redirect to login page if not authenticated
+    }
+  }, [router]);
 
   return (
     <Formik

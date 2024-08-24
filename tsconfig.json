@@ -23,7 +23,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/components/main/PageHeader.jsx"
+    "src/app/components/main/PageHeader.jsx",
+    "src/app/utils/withAuth.js"
   ],
   "exclude": ["node_modules"]
 }

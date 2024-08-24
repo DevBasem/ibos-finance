@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { Card, ProgressBar } from "@tremor/react";
 import { AreaChart } from "@tremor/react";
 import { RiFlag2Line } from "@remixicon/react";
@@ -11,196 +12,103 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
+import Cookies from "js-cookie";
+import PageHeader from "../components/main/PageHeader";
+import { Icon } from "@iconify/react";
 
-import PageHeader from "../components/main/PageHeader"
+export default function Home() {
+  const [marketData, setMarketData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-const chartdata = [
-  {
-    date: "Jan 22",
-    SolarPanels: 2890,
-    Inverters: 2338,
-  },
-  {
-    date: "Feb 22",
-    SolarPanels: 2756,
-    Inverters: 2103,
-  },
-  {
-    date: "Mar 22",
-    SolarPanels: 3322,
-    Inverters: 2194,
-  },
-  {
-    date: "Apr 22",
-    SolarPanels: 3470,
-    Inverters: 2108,
-  },
-  {
-    date: "May 22",
-    SolarPanels: 3475,
-    Inverters: 1812,
-  },
-  {
-    date: "Jun 22",
-    SolarPanels: 3129,
-    Inverters: 1726,
-  },
-  {
-    date: "Jul 22",
-    SolarPanels: 3490,
-    Inverters: 1982,
-  },
-  {
-    date: "Aug 22",
-    SolarPanels: 2903,
-    Inverters: 2012,
-  },
-  {
-    date: "Sep 22",
-    SolarPanels: 2643,
-    Inverters: 2342,
-  },
-  {
-    date: "Oct 22",
-    SolarPanels: 2837,
-    Inverters: 2473,
-  },
-  {
-    date: "Nov 22",
-    SolarPanels: 2954,
-    Inverters: 3848,
-  },
-  {
-    date: "Dec 22",
-    SolarPanels: 3239,
-    Inverters: 3736,
-  },
-];
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      const token = Cookies.get("token");
 
-const data = [
-  {
-    name: "Viola Amherd",
-    Role: "Federal Councillor",
-    departement:
-      "The Federal Department of Defence, Civil Protection and Sport (DDPS)",
-    status: "active",
-  },
-  {
-    name: "Albert Rösti",
-    Role: "Federal Councillor",
-    departement:
-      "The Federal Department of the Environment, Transport, Energy and Communications (DETEC)",
-    status: "active",
-  },
-  {
-    name: "Beat Jans",
-    Role: "Federal Councillor",
-    departement: "The Federal Department of Justice and Police (FDJP)",
-    status: "active",
-  },
-  {
-    name: "Ignazio Cassis",
-    Role: "Federal Councillor",
-    departement: "The Federal Department of Foreign Affairs (FDFA)",
-    status: "active",
-  },
-  {
-    name: "Karin Keller-Sutter",
-    Role: "Federal Councillor",
-    departement: "The Federal Department of Finance (FDF)",
-    status: "active",
-  },
-  {
-    name: "Guy Parmelin",
-    Role: "Federal Councillor",
-    departement:
-      "The Federal Department of Economic Affairs, Education and Research (EAER)",
-    status: "active",
-  },
-  {
-    name: "Elisabeth Baume-Schneider",
-    Role: "Federal Councillor",
-    departement: "The Federal Department of Home Affairs (FDHA)",
-    status: "active",
-  },
-];
+      try {
+        const response = await fetch("https://ibos-deploy.vercel.app/home", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-const dataFormatter = (number) =>
-  `$${Intl.NumberFormat("us").format(number).toString()}`;
+        if (response.ok) {
+          const result = await response.json();
+          setMarketData(result.data);
+        } else {
+          console.error("Failed to fetch market data");
+        }
+      } catch (error) {
+        console.error("Error fetching market data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export default function home() {
+    fetchMarketData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-8 h-8 border-4 border-t-transparent border-violet-500 border-solid rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = marketData.gold_history.map((item) => ({
+    date: item.date,
+    GoldPrice: item.price,
+  }));
+
+  const dataFormatter = (number) =>
+    `$${Intl.NumberFormat("us").format(number).toString()}`;
+
+  const iconMap = {
+    aapl: "bi:apple",
+    amzn: "ri:amazon-fill",
+    meta: "mingcute:meta-fill",
+  };
+
   return (
     <section>
       <PageHeader title="Welcome back," subtitle="Basem" />
 
       {/* cards */}
       <div className="flex flex-wrap gap-5">
-        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
-          <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Sales
-          </h4>
-          <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            $71,465
-          </p>
-          <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            <span>32% of annual target</span>
-            <span>$225,000</span>
-          </p>
-          <ProgressBar value={32} className="mt-2" />
-        </Card>
-
-        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
-          <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Sales
-          </h4>
-          <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            $71,465
-          </p>
-          <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            <span>32% of annual target</span>
-            <span>$225,000</span>
-          </p>
-          <ProgressBar value={32} className="mt-2" />
-        </Card>
-
-        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
-          <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Sales
-          </h4>
-          <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            $71,465
-          </p>
-          <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            <span>32% of annual target</span>
-            <span>$225,000</span>
-          </p>
-          <ProgressBar value={32} className="mt-2" />
-        </Card>
-
-        <Card className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl">
-          <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Sales
-          </h4>
-          <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            $71,465
-          </p>
-          <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            <span>32% of annual target</span>
-            <span>$225,000</span>
-          </p>
-          <ProgressBar value={32} className="mt-2" />
-        </Card>
+        {Object.entries(marketData.items).map(([key, item]) => (
+          <Card
+            key={key}
+            className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl"
+          >
+            <div className="flex items-center justify-between">
+              <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                {item.name}
+              </h4>
+              <Icon className="h-10 w-10" icon={iconMap[key]} />
+            </div>
+            <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              {dataFormatter(item.price)}
+            </p>
+            <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+              <span>32% of annual target</span>
+              <span>$225,000</span>
+            </p>
+            <ProgressBar value={32} className="mt-2" />
+          </Card>
+        ))}
       </div>
 
       {/* chart */}
       <div className="bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
-        <h2 className="pb-4 text-xl font-bold">Markets</h2>
+        <h2 className="pb-4 text-xl font-bold">Gold Price History</h2>
         <AreaChart
           className="min-h-[400px]"
-          data={chartdata}
+          data={chartData}
           index="date"
-          categories={["SolarPanels", "Inverters"]}
-          colors={["indigo", "rose"]}
+          categories={["GoldPrice"]}
+          colors={["indigo"]}
           valueFormatter={dataFormatter}
           yAxisWidth={60}
           showGridLines={false}
@@ -222,14 +130,14 @@ export default function home() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((item) => (
-                <TableRow key={item.name}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.Role}</TableCell>
-                  <TableCell>{item.departement}</TableCell>
+              {marketData.DealCompanies.map((company, index) => (
+                <TableRow key={index}>
+                  <TableCell>{company.name}</TableCell>
+                  <TableCell>{company.Role}</TableCell>
+                  <TableCell>{company.departement}</TableCell>
                   <TableCell>
                     <Badge color="emerald" icon={RiFlag2Line}>
-                      {item.status}
+                      {company.status}
                     </Badge>
                   </TableCell>
                 </TableRow>
