@@ -33,6 +33,7 @@ export default function Home() {
 
         if (response.ok) {
           const result = await response.json();
+          console.log(result.data);
           setMarketData(result.data);
         } else {
           console.error("Failed to fetch market data");
@@ -56,6 +57,7 @@ export default function Home() {
       </div>
     );
   }
+
 
   const chartData = marketData.gold_history.map((item) => ({
     date: item.date,

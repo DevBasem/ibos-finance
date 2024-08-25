@@ -81,7 +81,36 @@ export default function Investments() {
   }, []);
 
   useEffect(() => {
-    fetchFilteredData();
+    const fetchFilteredData = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await fetch(
+          "https://ibos-deploy.vercel.app/filteredInvestment-recommedations",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              filters: selectedFilter ? [selectedFilter] : [],
+              page: page,
+              budget: budget,
+            }),
+          },
+        );
+        const result = await response.json();
+        if (result.status === "success") {
+          setData(result.data);
+        } else {
+          console.error(result.message);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
   }, [selectedFilter, budget, page]);
 
   const dataFormatter = (number) =>

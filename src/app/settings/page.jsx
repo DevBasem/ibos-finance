@@ -6,6 +6,9 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import PageHeader from "../components/main/PageHeader";
+import { Select } from "@headlessui/react";
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import Cookie from 'js-cookie';
 
 const CountryDropdown = dynamic(
   () =>
@@ -35,7 +38,7 @@ const validationSchema = Yup.object({
     )
     .required("Year is required"),
   salary: Yup.number().required("Salary is required"),
-  savings: Yup.number().required("Savings is required"),
+  saving: Yup.number().required("Saving is required"),
   expenses: Yup.number().required("Expenses are required"),
   investments: Yup.number().required("Investments are required"),
   debtsToPay: Yup.number().required("Debts to Pay is required"),
@@ -43,76 +46,86 @@ const validationSchema = Yup.object({
 });
 
 const Settings = () => {
-  const [initialValues, setInitialValues] = useState({
-    fullName: "",
-    gender: "",
-    country: "",
-    day: "",
-    month: "",
-    year: "",
-    salary: "",
-    savings: "",
-    expenses: "",
-    investments: "",
-    debtsToPay: "",
-    debtsOwed: ""
-  });
-  const [image, setImage] = useState(null);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [country, setCountry] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    // Fetch the existing data (e.g., from localStorage or an API)
-    const fetchedData = JSON.parse(localStorage.getItem("personalInfo")) || {};
-    const fetchedFinancialData = JSON.parse(localStorage.getItem("financialInfo")) || {};
 
-    setInitialValues({
-      ...fetchedData,
-      ...fetchedFinancialData
-    });
-  }, []);
-
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
-      // Handle account deletion logic here
-      axios.delete("/api/delete-account")
-        .then(response => {
-          alert("Account deleted successfully.");
-          router.push("/login"); // Redirect to login page after deletion
-        })
-        .catch(error => {
-          alert("An error occurred while deleting the account.");
-        });
+      try {
+        const token = Cookie.get('token'); // Retrieve the token from cookies
+
+        await axios.delete(
+          'https://ibos-deploy.vercel.app/settings/update-info',
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`, // Set the token in the Authorization header
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        // Remove the token from cookies
+        Cookie.remove('token');
+
+        // Redirect to login page after deletion
+        router.push("/login");
+      } catch (error) {
+        console.error("An error occurred while deleting the account:", error);
+        alert("An error occurred while deleting the account.");
+      }
     }
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    // Update user data
-    localStorage.setItem("personalInfo", JSON.stringify(values));
-    localStorage.setItem("financialInfo", JSON.stringify(values));
-    setSubmitting(false);
-    router.push("/settings");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setSubmitting(true);
+
+    const token = Cookie.get('token'); // Retrieve the token from cookies
+
+    try {
+      const response = await axios.put(
+        'https://ibos-deploy.vercel.app/settings/update-info',
+        values,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Set the token in the Authorization header
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      // Set the server response message
+      setResponseMessage(response.data.message || "Information updated successfully.");
+      router.push("/settings");
+    } catch (error) {
+      console.error("Error updating information:", error);
+      // Set error response message
+      setResponseMessage(error.response?.data?.message || "An error occurred while updating your information.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{
+        fullName: "",
+        gender: "",
+        country: "",
+        day: "",
+        month: "",
+        year: "",
+        salary: "",
+        saving: "",
+        expenses: "",
+        investments: "",
+        debtsToPay: "",
+        debtsOwed: ""
+      }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      validateOnChange={false}
-      validateOnBlur={false}
     >
-      {({ isSubmitting, setFieldValue }) => (
+      {({ isSubmitting, isValid, dirty, setFieldValue, setFieldTouched }) => (
         <Form>
           <PageHeader title="Settings" subtitle="Update your information" />
           <div className="mt-12">
@@ -133,17 +146,21 @@ const Settings = () => {
                 />
               </div>
               <div>
-                <Field
-                  as="select"
-                  id="gender"
-                  name="gender"
-                  className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </Field>
+                <div className="relative">
+                  <Select
+                    as="select"
+                    id="gender"
+                    name="gender"
+                    onChange={(e) => setFieldValue("gender", e.target.value)}
+                    className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                  >
+                    <option value="" disabled>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </Select>
+                  <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                </div>
                 <ErrorMessage
                   name="gender"
                   component="div"
@@ -151,13 +168,17 @@ const Settings = () => {
                 />
               </div>
               <div>
-                <CountryDropdown
-                  value={initialValues.country}
-                  onChange={(val) => {
-                    setFieldValue("country", val);
-                  }}
-                  className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                />
+                <div className="relative">
+                  <CountryDropdown
+                    value={country}
+                    onChange={(val) => {
+                      setCountry(val);
+                      setFieldValue("country", val);
+                    }}
+                    className="block appearance-none w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                  />
+                  <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                </div>
                 <ErrorMessage
                   name="country"
                   component="div"
@@ -236,14 +257,14 @@ const Settings = () => {
                   </div>
                   <div className="flex-1">
                     <Field
-                      id="savings"
-                      name="savings"
+                      id="saving"
+                      name="saving"
                       type="number"
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
-                      placeholder="Savings"
+                      placeholder="Saving"
                     />
                     <ErrorMessage
-                      name="savings"
+                      name="saving"
                       component="div"
                       className="text-red-500"
                     />
@@ -312,41 +333,34 @@ const Settings = () => {
               </div>
             </div>
 
-            {/* Image Upload */}
-            <div className="mt-12">
-              <input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="block w-full rounded-lg border p-4"
-              />
-              {image && (
-                <div className="mt-4">
-                  <img src={image} alt="Uploaded preview" className="w-32 h-32 object-cover rounded-lg" />
-                </div>
-              )}
-            </div>
+            {/* <!-- Display server response --> */}
+            {responseMessage && (
+              <div className="my-4 p-4 rounded-lg border border-gray-200 bg-gray-50">
+                <p className="text-sm font-semibold text-gray-800">{responseMessage}</p>
+              </div>
+            )}
 
             {/* Account Deletion */}
-            <div className="mt-8">
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                className="w-full rounded-lg bg-red-500 p-4 text-white"
-              >
-                Delete Account
-              </button>
-            </div>
+            <div className="flex gap-4 mt-8 max-sm:flex-col">
+              <div className="flex-1">
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  className="w-full rounded-lg bg-red-500 p-4 text-white"
+                >
+                  Delete Account
+                </button>
+              </div>
 
-            <div className="mt-8">
-              <button
-                className="w-full rounded-lg bg-button-gradient p-4 text-white"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Saving..." : "Save Changes"}
-              </button>
+              <div className="flex-1">
+                <button
+                  className="w-full rounded-lg bg-button-gradient p-4 text-white"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
             </div>
           </div>
         </Form>

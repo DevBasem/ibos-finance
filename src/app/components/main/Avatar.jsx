@@ -5,7 +5,7 @@ export default function Avatar() {
   return (
     <div className="flex items-center gap-4">
       <div className="">
-        <Image width={65} height={68} src="/images/avatar.png" />
+        <Image width={65} height={68} src="/images/avatar.png" alt="avatar" />
       </div>
       <div className="flex-1">
         <span className="text-lg font-[700] leading-5">Basem</span>

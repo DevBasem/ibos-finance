@@ -133,8 +133,7 @@ const PersonalInfoForm = () => {
                       id="gender"
                       name="gender"
                       onChange={(e) => setFieldValue("gender", e.target.value)}
-                      onBlur={() => setFieldTouched("gender", true)}
-                      className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
+                      className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                     >
                       <option value="" disabled>Select Gender</option>
                       <option value="male">Male</option>
