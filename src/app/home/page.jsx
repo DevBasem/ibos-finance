@@ -49,9 +49,9 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="flex space-x-2">
-          <div className="w-8 h-8 border-4 border-t-transparent border-violet-500 border-solid rounded-full animate-spin"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-violet-500 border-t-transparent"></div>
         </div>
       </div>
     );
@@ -69,7 +69,7 @@ export default function Home() {
     aapl: "bi:apple",
     amzn: "ri:amazon-fill",
     meta: "mingcute:meta-fill",
-  };
+  }
 
   return (
     <section>
@@ -80,7 +80,7 @@ export default function Home() {
         {Object.entries(marketData.items).map(([key, item]) => (
           <Card
             key={key}
-            className="flex-1 min-w-64 bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white border-stone-200 shadow-xl"
+            className="min-w-64 flex-1 border-stone-200 bg-main-light-secondary shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white"
           >
             <div className="flex items-center justify-between">
               <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
@@ -101,7 +101,7 @@ export default function Home() {
       </div>
 
       {/* chart */}
-      <div className="bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
+      <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
         <h2 className="pb-4 text-xl font-bold">Gold Price History</h2>
         <AreaChart
           className="min-h-[400px]"
@@ -117,7 +117,7 @@ export default function Home() {
       </div>
 
       {/* table */}
-      <div className="bg-main-light-secondary dark:bg-main-dark-secondary dark:border-main-dark-secondary dark:text-white my-4 rounded-lg border border-stone-200 p-4 shadow-xl">
+      <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
         <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
         <div>
           <Table>
