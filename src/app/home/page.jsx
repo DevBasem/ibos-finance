@@ -60,10 +60,16 @@ export default function Home() {
 
   if (marketData === null) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <p className="text-lg font-bold text-red-500">
-          Please FIX THE Backend API, thank you
-        </p>
+      <div>
+        <PageHeader
+          title="Recommendations"
+          subtitle="AI Generated Recommendations"
+        />
+        <div className="flex min-h-[calc(100vh-250px)] items-center justify-center p-4">
+          <p className="text-center text-lg font-bold text-red-500">
+            Please FIX THE Backend API, thank you
+          </p>
+        </div>
       </div>
     );
   }

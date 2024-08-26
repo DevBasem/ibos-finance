@@ -42,6 +42,7 @@ export default function Investments() {
         },
       );
       const result = await response.json();
+      console.log(result);
       if (result.status === "success") {
         setData(result.data || []);
         setTotalPages(result.totalPages || 4);
