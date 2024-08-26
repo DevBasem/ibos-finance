@@ -17,9 +17,11 @@ export default function Investments() {
   const [data, setData] = useState([]);
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("");
-  const [budget, setBudget] = useState(0); // New state for budget
-  const [page, setPage] = useState(1); // New state for pagination (if applicable)
+  const [budget, setBudget] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState([]);
 
   const fetchFilteredData = async () => {
     const token = Cookies.get("token");
@@ -41,90 +43,52 @@ export default function Investments() {
       );
       const result = await response.json();
       if (result.status === "success") {
-        setData(result.data);
+        setData(result.data || []);
+        setTotalPages(result.totalPages || 4);
       } else {
         console.error(result.message);
+        setData([]);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
+      setData([]);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      const token = Cookies.get("token");
-      try {
-        const response = await fetch(
-          "https://ibos-deploy.vercel.app/investment-recommedations",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        const result = await response.json();
-        if (result.status === "success") {
-          setFilters(result.data.filters);
-        } else {
-          console.error(result.message);
-        }
-      } catch (error) {
-        console.error("Failed to fetch data", error);
-      } finally {
-        setLoading(false);
+  const addToFavorites = async (company) => {
+    const token = Cookies.get("token");
+    try {
+      const response = await fetch("https://ibos-deploy.vercel.app/companies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...company, dealDone: true, star: true }),
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        const updatedFavorites = [...favorites, company.symbol];
+        setFavorites(updatedFavorites);
+        localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      } else {
+        console.error(result.message);
       }
-    };
-
-    fetchInitialData();
-  }, []);
+    } catch (error) {
+      console.error("Failed to add to favorites", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchFilteredData = async () => {
-      const token = Cookies.get("token");
-      try {
-        const response = await fetch(
-          "https://ibos-deploy.vercel.app/filteredInvestment-recommedations",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              filters: selectedFilter ? [selectedFilter] : [],
-              page: page,
-              budget: budget,
-            }),
-          },
-        );
-        const result = await response.json();
-        if (result.status === "success") {
-          setData(result.data);
-        } else {
-          console.error(result.message);
-        }
-      } catch (error) {
-        console.error("Failed to fetch data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(storedFavorites);
+    fetchFilteredData();
   }, [selectedFilter, budget, page]);
 
   const dataFormatter = (number) =>
     Intl.NumberFormat("us").format(number).toString();
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex space-x-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-violet-500 border-t-transparent"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -179,35 +143,88 @@ export default function Investments() {
           </div>
         </Card>
 
-        {/* table */}
-        <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
-          <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
-          <div>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>Company Name</TableHeaderCell>
-                  <TableHeaderCell>Market Cap</TableHeaderCell>
-                  <TableHeaderCell>Sector</TableHeaderCell>
-                  <TableHeaderCell>Price</TableHeaderCell>
-                  <TableHeaderCell>Volume</TableHeaderCell>
-                  <TableHeaderCell>Country</TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((item) => (
-                  <TableRow key={item.symbol}>
-                    <TableCell>{item.companyName}</TableCell>
-                    <TableCell>{dataFormatter(item.marketCap)}</TableCell>
-                    <TableCell>{item.sector || "N/A"}</TableCell>
-                    <TableCell>{dataFormatter(item.price)}</TableCell>
-                    <TableCell>{dataFormatter(item.volume)}</TableCell>
-                    <TableCell>{item.country || "N/A"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+        <div>
+          {loading ? (
+            <div className="flex min-h-[30rem] items-center justify-center">
+              <div className="flex space-x-2">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-violet-500 border-t-transparent"></div>
+              </div>
+            </div>
+          ) : (
+            <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
+              <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
+              <div>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableHeaderCell>Company Name</TableHeaderCell>
+                      <TableHeaderCell>Market Cap</TableHeaderCell>
+                      <TableHeaderCell>Sector</TableHeaderCell>
+                      <TableHeaderCell>Price</TableHeaderCell>
+                      <TableHeaderCell>Volume</TableHeaderCell>
+                      <TableHeaderCell>Country</TableHeaderCell>
+                      <TableHeaderCell>Favorite</TableHeaderCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.length > 0 ? (
+                      data.map((item) => (
+                        <TableRow key={item.symbol}>
+                          <TableCell>{item.companyName}</TableCell>
+                          <TableCell>{dataFormatter(item.marketCap)}</TableCell>
+                          <TableCell>{item.sector || "N/A"}</TableCell>
+                          <TableCell>{dataFormatter(item.price)}</TableCell>
+                          <TableCell>{dataFormatter(item.volume)}</TableCell>
+                          <TableCell>{item.country || "N/A"}</TableCell>
+                          <TableCell>
+                            <button
+                              onClick={() => addToFavorites(item)}
+                              className="text-xl"
+                            >
+                              <Icon
+                                icon={
+                                  favorites.includes(item.symbol)
+                                    ? "mdi:star"
+                                    : "mdi:star-outline"
+                                }
+                              />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center">
+                          No data available
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="my-4 flex justify-center">
+                <button
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                  className="mx-2 rounded-lg bg-blue-500 px-4 py-2 text-white"
+                >
+                  Previous
+                </button>
+                <span className="mx-2 text-lg">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  onClick={() =>
+                    setPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={page === totalPages}
+                  className="mx-2 rounded-lg bg-blue-500 px-4 py-2 text-white"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>

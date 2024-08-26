@@ -13,8 +13,11 @@ export default function SideBar() {
       icon: "majesticons:presentation-chart",
       route: "/investments",
     },
-    { name: "Market State", icon: "majesticons:money-line", route: "/market" },
-    { name: "Portfolio Data", icon: "majesticons:user", route: "/portfolio" },
+    {
+      name: "Recommendations",
+      icon: "majesticons:money-line",
+      route: "/recommendations",
+    },
     { name: "Settings", icon: "majesticons:settings-cog", route: "/settings" },
     { name: "Logout", icon: "majesticons:logout", route: "/logout" },
   ];

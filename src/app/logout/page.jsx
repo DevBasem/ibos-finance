@@ -9,9 +9,11 @@ const Logout = () => {
     useEffect(() => {
         // Remove the token from cookies
         Cookies.remove('token');
+        Cookies.remove("userId");
 
         // Redirect to the login page
         router.replace('/login');
+
     }, [router]);
 
     return null;

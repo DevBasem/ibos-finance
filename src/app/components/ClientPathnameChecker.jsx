@@ -13,9 +13,8 @@ export default function ClientPathnameChecker({ children }) {
     pathname === "/register/personal-info/financial-info";
   const isMainPage =
     pathname === "/home" ||
-    pathname === "/market" ||
     pathname === "/investments" ||
-    pathname === "/portfolio" ||
+    pathname === "/recommendations" ||
     pathname === "/settings";
 
   if (isAuthPage) {

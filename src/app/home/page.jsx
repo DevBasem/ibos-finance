@@ -58,6 +58,15 @@ export default function Home() {
     );
   }
 
+  if (marketData === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <p className="text-lg font-bold text-red-500">
+          Please FIX THE Backend API, thank you
+        </p>
+      </div>
+    );
+  }
 
   const chartData = marketData.gold_history.map((item) => ({
     date: item.date,
@@ -71,11 +80,11 @@ export default function Home() {
     aapl: "bi:apple",
     amzn: "ri:amazon-fill",
     meta: "mingcute:meta-fill",
-  }
+  };
 
   return (
     <section>
-      <PageHeader title="Welcome back," subtitle="Basem" />
+      <PageHeader title="Welcome back," subtitle={marketData.user.name} />
 
       {/* cards */}
       <div className="flex flex-wrap gap-5">
@@ -119,35 +128,49 @@ export default function Home() {
       </div>
 
       {/* table */}
-      <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
-        <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
-        <div>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>Name</TableHeaderCell>
-                <TableHeaderCell>Position</TableHeaderCell>
-                <TableHeaderCell>Department</TableHeaderCell>
-                <TableHeaderCell>Status</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {marketData.DealCompanies.map((company, index) => (
-                <TableRow key={index}>
-                  <TableCell>{company.name}</TableCell>
-                  <TableCell>{company.Role}</TableCell>
-                  <TableCell>{company.departement}</TableCell>
-                  <TableCell>
-                    <Badge color="emerald" icon={RiFlag2Line}>
-                      {company.status}
-                    </Badge>
-                  </TableCell>
+      {marketData.DealCompanies.length > 0 ? (
+        <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
+          <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
+          <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Company Name</TableHeaderCell>
+                  <TableHeaderCell>Market Cap</TableHeaderCell>
+                  <TableHeaderCell>Sector</TableHeaderCell>
+                  <TableHeaderCell>Price</TableHeaderCell>
+                  <TableHeaderCell>Country</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {marketData.DealCompanies.map((company, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{company.companyName}</TableCell>
+                    <TableCell>{dataFormatter(company.marketCap)}</TableCell>
+                    <TableCell>{company.sector}</TableCell>
+                    <TableCell>{dataFormatter(company.price)}</TableCell>
+                    <TableCell>{company.country}</TableCell>
+                    <TableCell>
+                      <Badge
+                        color={company.dealDone ? "emerald" : "red"}
+                        icon={RiFlag2Line}
+                      >
+                        {company.dealDone ? "Completed" : "Pending"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="my-4 rounded-lg border border-stone-200 bg-main-light-secondary p-4 shadow-xl dark:border-main-dark-secondary dark:bg-main-dark-secondary dark:text-white">
+          <h2 className="pb-4 text-xl font-bold">Deals Details</h2>
+          <p className="text-lg font-bold text-gray-500">No deals available</p>
+        </div>
+      )}
     </section>
   );
 }

@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import PageHeader from "../components/main/PageHeader";
 import { Select } from "@headlessui/react";
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import Cookie from 'js-cookie';
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import Cookie from "js-cookie";
 
 const CountryDropdown = dynamic(
   () =>
     import("react-country-region-selector").then((mod) => mod.CountryDropdown),
-  { ssr: false }
+  { ssr: false },
 );
 
 const validationSchema = Yup.object({
@@ -34,7 +34,7 @@ const validationSchema = Yup.object({
     .min(1900, "Year must be after 1900")
     .max(
       new Date().getFullYear(),
-      `Year must be before ${new Date().getFullYear()}`
+      `Year must be before ${new Date().getFullYear()}`,
     )
     .required("Year is required"),
   salary: Yup.number().required("Salary is required"),
@@ -46,28 +46,28 @@ const validationSchema = Yup.object({
 });
 
 const Settings = () => {
-  const [responseMessage, setResponseMessage] = useState('');
+  const [responseMessage, setResponseMessage] = useState("");
   const [country, setCountry] = useState("");
   const router = useRouter();
-
 
   const handleDeleteAccount = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
       try {
-        const token = Cookie.get('token'); // Retrieve the token from cookies
+        const token = Cookie.get("token"); // Retrieve the token from cookies
 
         await axios.delete(
-          'https://ibos-deploy.vercel.app/settings/update-info',
+          "https://ibos-deploy.vercel.app/settings/update-info",
           {
             headers: {
-              'Authorization': `Bearer ${token}`, // Set the token in the Authorization header
-              'Content-Type': 'application/json'
-            }
-          }
+              Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+              "Content-Type": "application/json",
+            },
+          },
         );
 
         // Remove the token from cookies
-        Cookie.remove('token');
+        Cookie.remove("token");
+        Cookie.remove("userId");
 
         // Redirect to login page after deletion
         router.push("/login");
@@ -81,26 +81,32 @@ const Settings = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
 
-    const token = Cookie.get('token'); // Retrieve the token from cookies
+    const token = Cookie.get("token"); // Retrieve the token from cookies
 
     try {
       const response = await axios.put(
-        'https://ibos-deploy.vercel.app/settings/update-info',
+        "https://ibos-deploy.vercel.app/settings/update-info",
         values,
         {
           headers: {
-            'Authorization': `Bearer ${token}`, // Set the token in the Authorization header
-            'Content-Type': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+            "Content-Type": "application/json",
+          },
+        },
       );
       // Set the server response message
-      setResponseMessage(response.data.message || "Information updated successfully.");
-      router.push("/settings");
+      setResponseMessage(
+        response.data.message || "Information updated successfully.",
+      );
+
+      window.location.reload();
     } catch (error) {
       console.error("Error updating information:", error);
       // Set error response message
-      setResponseMessage(error.response?.data?.message || "An error occurred while updating your information.");
+      setResponseMessage(
+        error.response?.data?.message ||
+          "An error occurred while updating your information.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -120,7 +126,7 @@ const Settings = () => {
         expenses: "",
         investments: "",
         debtsToPay: "",
-        debtsOwed: ""
+        debtsOwed: "",
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -154,12 +160,15 @@ const Settings = () => {
                     onChange={(e) => setFieldValue("gender", e.target.value)}
                     className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                   >
-                    <option value="" disabled>Select Gender</option>
+                    <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                   </Select>
-                  <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                  <ChevronDownIcon
+                    className="absolute right-2.5 top-5 size-5 fill-gray-500"
+                    aria-hidden="true"
+                  />
                 </div>
                 <ErrorMessage
                   name="gender"
@@ -175,9 +184,12 @@ const Settings = () => {
                       setCountry(val);
                       setFieldValue("country", val);
                     }}
-                    className="block appearance-none w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
+                    className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                   />
-                  <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                  <ChevronDownIcon
+                    className="absolute right-2.5 top-5 size-5 fill-gray-500"
+                    aria-hidden="true"
+                  />
                 </div>
                 <ErrorMessage
                   name="country"
@@ -335,13 +347,15 @@ const Settings = () => {
 
             {/* <!-- Display server response --> */}
             {responseMessage && (
-              <div className="my-4 p-4 rounded-lg border border-gray-200 bg-gray-50">
-                <p className="text-sm font-semibold text-gray-800">{responseMessage}</p>
+              <div className="my-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  {responseMessage}
+                </p>
               </div>
             )}
 
             {/* Account Deletion */}
-            <div className="flex gap-4 mt-8 max-sm:flex-col">
+            <div className="mt-8 flex gap-4 max-sm:flex-col">
               <div className="flex-1">
                 <button
                   type="button"

@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Cookies from 'js-cookie';
-import axios from 'axios';
-import { Select } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import Cookies from "js-cookie";
+import axios from "axios";
+import { Select } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import withAuth from "../../utils/withAuth";
 
 const CountryDropdown = dynamic(
@@ -52,10 +52,10 @@ const PersonalInfoForm = () => {
     setSuccessMessage("");
 
     try {
-      const token = Cookies.get('token'); // Get the token using js-cookie
+      const token = Cookies.get("token"); // Get the token using js-cookie
 
       const response = await axios.post(
-        'https://ibos-deploy.vercel.app/register/personal-info',
+        "https://ibos-deploy.vercel.app/register/personal-info",
         {
           fullName: values.fullName,
           gender: values.gender,
@@ -66,9 +66,9 @@ const PersonalInfoForm = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.data.status === "success") {
@@ -76,11 +76,16 @@ const PersonalInfoForm = () => {
         // Navigate to the next page
         router.push("/register/personal-info/financial-info");
       } else {
-        setError(response.data.message || "Submission failed. Please try again.");
+        setError(
+          response.data.message || "Submission failed. Please try again.",
+        );
       }
     } catch (error) {
       console.error("Error during submission:", error);
-      setError(error.response?.data?.message || "An error occurred. Please try again later.");
+      setError(
+        error.response?.data?.message ||
+          "An error occurred. Please try again later.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +128,7 @@ const PersonalInfoForm = () => {
                   <ErrorMessage
                     name="fullName"
                     component="div"
-                    className="text-red-500 text-sm ms-1"
+                    className="ms-1 text-sm text-red-500"
                   />
                 </div>
                 <div>
@@ -135,17 +140,20 @@ const PersonalInfoForm = () => {
                       onChange={(e) => setFieldValue("gender", e.target.value)}
                       className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                     >
-                      <option value="" disabled>Select Gender</option>
+                      <option value="">Select Gender</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </Select>
-                    <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                    <ChevronDownIcon
+                      className="absolute right-2.5 top-5 size-5 fill-gray-500"
+                      aria-hidden="true"
+                    />
                   </div>
                   <ErrorMessage
                     name="gender"
                     component="div"
-                    className="text-red-500 text-sm ms-1"
+                    className="ms-1 text-sm text-red-500"
                   />
                 </div>
                 <div>
@@ -157,14 +165,17 @@ const PersonalInfoForm = () => {
                         setFieldValue("country", val);
                       }}
                       onBlur={() => setFieldTouched("country", true)}
-                      className="block appearance-none w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
+                      className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none md:w-[455px]"
                     />
-                    <ChevronDownIcon className="absolute top-5 right-2.5 size-5 fill-gray-500" aria-hidden="true" />
+                    <ChevronDownIcon
+                      className="absolute right-2.5 top-5 size-5 fill-gray-500"
+                      aria-hidden="true"
+                    />
                   </div>
                   <ErrorMessage
                     name="country"
                     component="div"
-                    className="text-red-500 text-sm ms-1"
+                    className="ms-1 text-sm text-red-500"
                   />
                 </div>
                 <div className="flex gap-4">
@@ -181,7 +192,7 @@ const PersonalInfoForm = () => {
                     <ErrorMessage
                       name="day"
                       component="div"
-                      className="text-red-500 text-sm ms-1"
+                      className="ms-1 text-sm text-red-500"
                     />
                   </div>
                   <div className="flex-1">
@@ -197,7 +208,7 @@ const PersonalInfoForm = () => {
                     <ErrorMessage
                       name="month"
                       component="div"
-                      className="text-red-500 text-sm ms-1"
+                      className="ms-1 text-sm text-red-500"
                     />
                   </div>
                   <div className="flex-1">
@@ -213,19 +224,19 @@ const PersonalInfoForm = () => {
                     <ErrorMessage
                       name="year"
                       component="div"
-                      className="text-red-500 text-sm ms-1"
+                      className="ms-1 text-sm text-red-500"
                     />
                   </div>
                 </div>
               </div>
               <div className="mt-8">
                 {error && (
-                  <p className="mt-5 text-red-600 bg-red-100 text-sm w-fit mx-auto px-3 py-1 rounded-full">
+                  <p className="mx-auto mt-5 w-fit rounded-full bg-red-100 px-3 py-1 text-sm text-red-600">
                     {error}
                   </p>
                 )}
                 {successMessage && (
-                  <p className="mt-5 text-green-600 bg-green-100 text-sm w-fit mx-auto px-3 py-1 rounded-full">
+                  <p className="mx-auto mt-5 w-fit rounded-full bg-green-100 px-3 py-1 text-sm text-green-600">
                     {successMessage}
                   </p>
                 )}
@@ -245,6 +256,6 @@ const PersonalInfoForm = () => {
       )}
     </Formik>
   );
-}
+};
 
 export default withAuth(PersonalInfoForm);
