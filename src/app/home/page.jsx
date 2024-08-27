@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, ProgressBar } from "@tremor/react";
 import { AreaChart } from "@tremor/react";
 import { RiFlag2Line } from "@remixicon/react";
@@ -16,37 +16,65 @@ import Cookies from "js-cookie";
 import PageHeader from "../components/main/PageHeader";
 import { Icon } from "@iconify/react";
 
+const fetchMarketData = async (token) => {
+  try {
+    const response = await fetch("https://ibos-deploy.vercel.app/home", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.data;
+    } else {
+      throw new Error("Failed to fetch market data");
+    }
+  } catch (error) {
+    console.error("Error fetching market data:", error);
+    throw error;
+  }
+};
+
 export default function Home() {
   const [marketData, setMarketData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMarketData = async () => {
-      const token = Cookies.get("token");
+    const token = Cookies.get("token");
 
-      try {
-        const response = await fetch("https://ibos-deploy.vercel.app/home", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    if (!token) {
+      console.error("No token found");
+      setLoading(false);
+      return;
+    }
 
-        if (response.ok) {
-          const result = await response.json();
-          console.log(result.data);
-          setMarketData(result.data);
-        } else {
-          console.error("Failed to fetch market data");
-        }
-      } catch (error) {
-        console.error("Error fetching market data:", error);
-      } finally {
+    fetchMarketData(token)
+      .then(data => {
+        setMarketData(data);
         setLoading(false);
-      }
-    };
-
-    fetchMarketData();
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
+
+  const chartData = useMemo(() => {
+    if (!marketData) return [];
+    return marketData.gold_history.map((item) => ({
+      date: item.date,
+      GoldPrice: item.price,
+    }));
+  }, [marketData]);
+
+  const dataFormatter = useMemo(() => (number) =>
+    `$${Intl.NumberFormat("us").format(number).toString()}`, []);
+
+  const iconMap = useMemo(() => ({
+    aapl: "bi:apple",
+    amzn: "ri:amazon-fill",
+    meta: "mingcute:meta-fill",
+  }), []);
 
   if (loading) {
     return (
@@ -61,10 +89,7 @@ export default function Home() {
   if (marketData === null) {
     return (
       <div>
-        <PageHeader
-          title="Recommendations"
-          subtitle="AI Generated Recommendations"
-        />
+        <PageHeader title="Welcome back," subtitle="" />
         <div className="flex min-h-[calc(100vh-250px)] items-center justify-center p-4">
           <p className="text-center text-lg font-bold text-red-500">
             Please FIX THE Backend API, thank you
@@ -73,20 +98,6 @@ export default function Home() {
       </div>
     );
   }
-
-  const chartData = marketData.gold_history.map((item) => ({
-    date: item.date,
-    GoldPrice: item.price,
-  }));
-
-  const dataFormatter = (number) =>
-    `$${Intl.NumberFormat("us").format(number).toString()}`;
-
-  const iconMap = {
-    aapl: "bi:apple",
-    amzn: "ri:amazon-fill",
-    meta: "mingcute:meta-fill",
-  };
 
   return (
     <section>

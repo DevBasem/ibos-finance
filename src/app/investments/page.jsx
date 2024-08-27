@@ -23,41 +23,6 @@ export default function Investments() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
 
-  const fetchFilteredData = async () => {
-    const token = Cookies.get("token");
-    try {
-      const response = await fetch(
-        "https://ibos-deploy.vercel.app/filteredInvestment-recommedations",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            filters: selectedFilter ? [selectedFilter] : [],
-            page: page,
-            budget: budget,
-          }),
-        },
-      );
-      const result = await response.json();
-      console.log(result);
-      if (result.status === "success") {
-        setData(result.data || []);
-        setTotalPages(result.totalPages || 4);
-      } else {
-        console.error(result.message);
-        setData([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch data", error);
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addToFavorites = async (company) => {
     const token = Cookies.get("token");
     try {
@@ -83,8 +48,75 @@ export default function Investments() {
   };
 
   useEffect(() => {
+    const fetchFiltersAndData = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await fetch(
+          "https://ibos-deploy.vercel.app/investment-recommedations",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const result = await response.json();
+        if (result.status === "success") {
+          setFilters(result.data.filters || []);
+          setData(result.data.minMarket.paginatedResults || []);
+          setTotalPages(result.data.minMarket.totalPages || 1);
+        } else {
+          console.error(result.message);
+          setData([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setFavorites(storedFavorites);
+    fetchFiltersAndData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFilteredData = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await fetch(
+          "https://ibos-deploy.vercel.app/filteredInvestment-recommedations",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              filters: selectedFilter ? [selectedFilter] : [],
+              page: page,
+              budget: budget,
+            }),
+          }
+        );
+        const result = await response.json();
+        if (result.status === "success") {
+          setData(result.data || []);
+          setTotalPages(result.totalPages || 4);
+        } else {
+          console.error(result.message);
+          setData([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchFilteredData();
   }, [selectedFilter, budget, page]);
 
@@ -215,9 +247,7 @@ export default function Investments() {
                   Page {page} of {totalPages}
                 </span>
                 <button
-                  onClick={() =>
-                    setPage((prev) => Math.min(prev + 1, totalPages))
-                  }
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={page === totalPages}
                   className="mx-2 rounded-lg bg-blue-500 px-4 py-2 text-white"
                 >

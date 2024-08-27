@@ -17,59 +17,86 @@ const CountryDropdown = dynamic(
 );
 
 const validationSchema = Yup.object({
-  fullName: Yup.string()
-    .min(3, "Full Name must be at least 3 characters")
-    .required("Full Name is required"),
-  gender: Yup.string().required("Gender is required"),
-  country: Yup.string().required("Country is required"),
-  day: Yup.number()
-    .min(1, "Day must be between 1 and 31")
-    .max(31, "Day must be between 1 and 31")
-    .required("Day is required"),
-  month: Yup.number()
-    .min(1, "Month must be between 1 and 12")
-    .max(12, "Month must be between 1 and 12")
-    .required("Month is required"),
-  year: Yup.number()
-    .min(1900, "Year must be after 1900")
-    .max(
-      new Date().getFullYear(),
-      `Year must be before ${new Date().getFullYear()}`,
-    )
-    .required("Year is required"),
-  salary: Yup.number().required("Salary is required"),
-  saving: Yup.number().required("Saving is required"),
-  expenses: Yup.number().required("Expenses are required"),
-  investments: Yup.number().required("Investments are required"),
-  debtsToPay: Yup.number().required("Debts to Pay is required"),
-  debtsOwed: Yup.number().required("Debts Owed is required"),
+  fullName: Yup.string().min(3, "Full Name must be at least 3 characters"),
+  gender: Yup.string(),
+  country: Yup.string(),
+  day: Yup.number().min(1, "Day must be between 1 and 31").max(31, "Day must be between 1 and 31"),
+  month: Yup.number().min(1, "Month must be between 1 and 12").max(12, "Month must be between 1 and 12"),
+  year: Yup.number().min(1900, "Year must be after 1900").max(new Date().getFullYear(), `Year must be before ${new Date().getFullYear()}`),
+  salary: Yup.number(),
+  saving: Yup.number(),
+  expenses: Yup.number(),
+  investments: Yup.number(),
+  debtsToPay: Yup.number(),
+  debtsOwed: Yup.number(),
 });
 
 const Settings = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [country, setCountry] = useState("");
+  const [initialValues, setInitialValues] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = Cookie.get("token");
+
+      try {
+        const response = await axios.get("https://ibos-deploy.vercel.app/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const user = response.data.user;
+        const birthday = new Date(user.birthday);
+
+        setInitialValues({
+          fullName: user.fullName || "",
+          gender: user.gender || "",
+          country: user.country || "",
+          day: birthday.getDate() || "",
+          month: birthday.getMonth() + 1 || "",
+          year: birthday.getFullYear() || "",
+          salary: user.salary || "",
+          saving: user.saving || "",
+          expenses: user.expenses || "",
+          investments: user.investments || "",
+          debtsToPay: user.debtsToPay || "",
+          debtsOwed: user.debtsOwed || "",
+        });
+        setCountry(user.country || "");
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setResponseMessage("Failed to load user data.");
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchUserData();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleDeleteAccount = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
       try {
-        const token = Cookie.get("token"); // Retrieve the token from cookies
+        const token = Cookie.get("token");
 
         await axios.delete(
           "https://ibos-deploy.vercel.app/settings/update-info",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           },
         );
 
-        // Remove the token from cookies
         Cookie.remove("token");
         Cookie.remove("userId");
 
-        // Redirect to login page after deletion
         router.push("/login");
       } catch (error) {
         console.error("An error occurred while deleting the account:", error);
@@ -80,8 +107,7 @@ const Settings = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
-
-    const token = Cookie.get("token"); // Retrieve the token from cookies
+    const token = Cookie.get("token");
 
     try {
       const response = await axios.put(
@@ -89,49 +115,44 @@ const Settings = () => {
         values,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
-      // Set the server response message
-      setResponseMessage(
-        response.data.message || "Information updated successfully.",
-      );
 
-      window.location.reload();
+      setResponseMessage(response.data.message || "Information updated successfully.");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error updating information:", error);
-      // Set error response message
       setResponseMessage(
-        error.response?.data?.message ||
-          "An error occurred while updating your information.",
+        error.response?.data?.message || "An error occurred while updating your information.",
       );
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (!initialValues) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex space-x-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-violet-500 border-t-transparent"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Formik
-      initialValues={{
-        fullName: "",
-        gender: "",
-        country: "",
-        day: "",
-        month: "",
-        year: "",
-        salary: "",
-        saving: "",
-        expenses: "",
-        investments: "",
-        debtsToPay: "",
-        debtsOwed: "",
-      }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
-      {({ isSubmitting, isValid, dirty, setFieldValue, setFieldTouched }) => (
+      {({ isSubmitting, setFieldValue, values }) => (
         <Form>
           <PageHeader title="Settings" subtitle="Update your information" />
           <div className="mt-12">
@@ -145,11 +166,7 @@ const Settings = () => {
                   className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                   placeholder="Full Name"
                 />
-                <ErrorMessage
-                  name="fullName"
-                  component="div"
-                  className="text-red-500"
-                />
+                <ErrorMessage name="fullName" component="div" className="text-red-500" />
               </div>
               <div>
                 <div className="relative">
@@ -157,6 +174,7 @@ const Settings = () => {
                     as="select"
                     id="gender"
                     name="gender"
+                    value={values.gender || ""}
                     onChange={(e) => setFieldValue("gender", e.target.value)}
                     className="block w-full appearance-none rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                   >
@@ -170,11 +188,7 @@ const Settings = () => {
                     aria-hidden="true"
                   />
                 </div>
-                <ErrorMessage
-                  name="gender"
-                  component="div"
-                  className="text-red-500"
-                />
+                <ErrorMessage name="gender" component="div" className="text-red-500" />
               </div>
               <div>
                 <div className="relative">
@@ -191,11 +205,7 @@ const Settings = () => {
                     aria-hidden="true"
                   />
                 </div>
-                <ErrorMessage
-                  name="country"
-                  component="div"
-                  className="text-red-500"
-                />
+                <ErrorMessage name="country" component="div" className="text-red-500" />
               </div>
               <div className="flex gap-4">
                 <div className="flex-1">
@@ -208,11 +218,7 @@ const Settings = () => {
                     min="1"
                     max="31"
                   />
-                  <ErrorMessage
-                    name="day"
-                    component="div"
-                    className="text-red-500"
-                  />
+                  <ErrorMessage name="day" component="div" className="text-red-500" />
                 </div>
                 <div className="flex-1">
                   <Field
@@ -224,11 +230,7 @@ const Settings = () => {
                     min="1"
                     max="12"
                   />
-                  <ErrorMessage
-                    name="month"
-                    component="div"
-                    className="text-red-500"
-                  />
+                  <ErrorMessage name="month" component="div" className="text-red-500" />
                 </div>
                 <div className="flex-1">
                   <Field
@@ -240,11 +242,7 @@ const Settings = () => {
                     min="1900"
                     max={new Date().getFullYear()}
                   />
-                  <ErrorMessage
-                    name="year"
-                    component="div"
-                    className="text-red-500"
-                  />
+                  <ErrorMessage name="year" component="div" className="text-red-500" />
                 </div>
               </div>
             </div>
@@ -261,11 +259,7 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Salary"
                     />
-                    <ErrorMessage
-                      name="salary"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="salary" component="div" className="text-red-500" />
                   </div>
                   <div className="flex-1">
                     <Field
@@ -275,11 +269,7 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Saving"
                     />
-                    <ErrorMessage
-                      name="saving"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="saving" component="div" className="text-red-500" />
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -291,11 +281,7 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Expenses"
                     />
-                    <ErrorMessage
-                      name="expenses"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="expenses" component="div" className="text-red-500" />
                   </div>
                   <div className="flex-1">
                     <Field
@@ -305,11 +291,7 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Investments"
                     />
-                    <ErrorMessage
-                      name="investments"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="investments" component="div" className="text-red-500" />
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -321,11 +303,7 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Debts to Pay"
                     />
-                    <ErrorMessage
-                      name="debtsToPay"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="debtsToPay" component="div" className="text-red-500" />
                   </div>
                   <div className="flex-1">
                     <Field
@@ -335,46 +313,39 @@ const Settings = () => {
                       className="block w-full rounded-lg border p-4 focus:shadow-input-shadow focus:outline-none"
                       placeholder="Debts Owed"
                     />
-                    <ErrorMessage
-                      name="debtsOwed"
-                      component="div"
-                      className="text-red-500"
-                    />
+                    <ErrorMessage name="debtsOwed" component="div" className="text-red-500" />
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* <!-- Display server response --> */}
-            {responseMessage && (
-              <div className="my-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <p className="text-sm font-semibold text-gray-800">
-                  {responseMessage}
-                </p>
-              </div>
-            )}
+          {/* Response Message */}
+          {responseMessage && (
+            <div className="mt-4 text-center text-green-500">{responseMessage}</div>
+          )}
 
-            {/* Account Deletion */}
-            <div className="mt-8 flex gap-4 max-sm:flex-col">
-              <div className="flex-1">
-                <button
-                  type="button"
-                  onClick={handleDeleteAccount}
-                  className="w-full rounded-lg bg-red-500 p-4 text-white"
-                >
-                  Delete Account
-                </button>
-              </div>
+          {/* Account Deletion */}
+          <div className="mt-8 flex gap-4 max-sm:flex-col">
+            <div className="flex-1">
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                className="w-full rounded-lg bg-red-500 p-4 text-white"
+              >
+                Delete Account
+              </button>
+            </div>
 
-              <div className="flex-1">
-                <button
-                  className="w-full rounded-lg bg-button-gradient p-4 text-white"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
+            {/* Update Information */}
+            <div className="flex-1">
+              <button
+                className="w-full rounded-lg bg-button-gradient p-4 text-white"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating..." : "Update Information"}
+              </button>
             </div>
           </div>
         </Form>
