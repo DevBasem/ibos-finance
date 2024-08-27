@@ -13,7 +13,7 @@ export default function AuthLayout({ children }) {
           alt="Finance image"
           priority
         />
-        <div className="hidden rounded-3xl border-2 bg-white px-8 max-sm:px-4 py-12 max-xl:block max-md:w-[calc(100%-2rem)] max-sm:mb-4">
+        <div className="hidden rounded-3xl border-2 dark:border-main-dark-secondary bg-main-light-primary dark:bg-main-dark-secondary dark:!text-white px-8 max-sm:px-4 py-12 max-xl:block max-md:w-[calc(100%-2rem)] max-sm:mb-4">
           {children}
         </div>
       </div>
