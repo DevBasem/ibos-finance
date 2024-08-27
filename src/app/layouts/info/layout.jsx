@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function InfoLayout({ children }) {
   return (
-    <main className="relative flex min-h-screen overflow-x-hidden">
+    <main className="relative bg-main-light-primary dark:bg-main-dark-primary flex min-h-screen overflow-x-hidden">
       <motion.div
         initial={{
           width: "50%",
@@ -23,7 +23,7 @@ export default function InfoLayout({ children }) {
           initial={{ x: "100%", y: "-50%" }}
           animate={{ x: "0", y: "-50%" }}
           transition={{ type: "spring", stiffness: 50, duration: 1.5 }}
-          className="absolute top-1/2 mx-4 -translate-y-1/2 rounded-3xl border-2 bg-white px-8 py-12"
+          className="absolute top-1/2 mx-4 -translate-y-1/2 rounded-3xl border-2 bg-main-light-primary dark:bg-main-dark-primary dark:text-white dark:border-main-dark-primary px-8 py-12"
         >
           {children}
         </motion.div>

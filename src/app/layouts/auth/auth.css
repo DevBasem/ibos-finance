@@ -1,0 +1,9 @@
+input {
+  @apply dark:border-main-dark-selected dark:bg-main-dark-selected;
+}
+select {
+  @apply dark:border-main-dark-selected dark:bg-main-dark-selected dark:text-white;
+}
+/* select option {
+  @apply;
+} */

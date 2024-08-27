@@ -1,8 +1,9 @@
 import Image from "next/image";
+import "./auth.css"
 
 export default function AuthLayout({ children }) {
   return (
-    <main className="flex min-h-screen">
+    <main className="bg-main-light-primary dark:bg-main-dark-primary flex min-h-screen">
       <div className="flex flex-1 flex-col items-center justify-center bg-main-gradient xl:rounded-br-xl xl:rounded-tr-xl">
         <Image
           className="max-xl:-my-3 max-xl:mx-auto max-xl:w-40 max-sm:mt-1 w-auto h-auto"
@@ -16,8 +17,8 @@ export default function AuthLayout({ children }) {
           {children}
         </div>
       </div>
-      <div className="grid flex-1 place-content-center bg-[#F5F6FA] py-4 max-xl:hidden">
-        <div className="rounded-3xl border-2 bg-white px-8 py-12">
+      <div className="grid flex-1 place-content-center bg-main-light-primary dark:bg-main-dark-primary  py-4 max-xl:hidden">
+        <div className="rounded-3xl border-2 dark:border-main-dark-secondary bg-main-light-primary dark:bg-main-dark-secondary dark:!text-white  px-8 py-12">
           {children}
         </div>
       </div>
