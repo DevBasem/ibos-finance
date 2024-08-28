@@ -7,7 +7,7 @@ import MainLayout from "../layouts/main/layout";
 export default function ClientPathnameChecker({ children }) {
   const pathname = usePathname();
 
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAuthPage = pathname === "/login" || pathname === "/register" || pathname === "/forget-password";
   const isInfoPage =
     pathname === "/register/personal-info" ||
     pathname === "/register/personal-info/financial-info";

@@ -121,7 +121,7 @@ export default function Login() {
                 </div>
               </div>
               <div className="mt-6">
-                <a href="/" className="hover:underline hover:text-blue-500">Forgot Password?</a>
+                <a href="/forget-password" className="hover:underline hover:text-blue-500">Forgot Password?</a>
               </div>
               {error && <p
                 className={`mt-5 text-red-600 bg-red-100 text-sm w-fit mx-auto px-3 py-1 rounded-full`}>{error}
