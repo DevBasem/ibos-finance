@@ -97,7 +97,7 @@ export default function Investments() {
             body: JSON.stringify({
               filters: selectedFilter ? [selectedFilter] : [],
               page: page,
-              budget: budget,
+              budget: budget > 0 ? budget : null,
             }),
           }
         );
